@@ -26,9 +26,9 @@ R_s = 287;
 
 % Simulation
 startTime = 0.0; % [s]
-stopTime = 1000.0; % [s]
+stopTime = 400.0; % [s]
 
-stepTime = 0.01; % [s]
+stepTime = 0.001; % [s]
 
 %% Initial Conditions
 
@@ -46,7 +46,8 @@ p_0 = deg2rad(0); % [rad/s] - Roll rate
 q_0 = deg2rad(0); % [rad/s] - Pitch rate
 r_0 = deg2rad(0); % [rad/s] - Yaw rate
 
-alpha_0 = deg2rad(-23.); % [rad] - Angle of attack
+alpha_0 = deg2rad(-24.5); % [rad] - Angle of attack
+alpha_0 = deg2rad(-20.);
 beta_0 = deg2rad(0.05); % [rad] - Angle of sideslip
 sigma_0 = deg2rad(110.); % [rad] - Bank angle
 
@@ -62,7 +63,7 @@ I_zz = 4454.80; % [kg/m^2]
 I_xy = 0; % [kg/m^2]
 I_yz = 0; % [kg/m^2]
 I_xz = 1752.00; % [kg/m^2]
-I_xz = 0;
+%I_xz = 0;
 
 
 %% Vehicle Properties
@@ -74,5 +75,5 @@ S_ref = 12; % [m^2]
 d_ref = 3.9; % [m^2] - Vehicle diameter
 
 % Center of Mass location (with respect to apex reference frame)
-r_cm = [2.57; 0; -0.137];
-r_cm = [1.57; 0; -0.137];
+r_cm = [2.57; 0; -0.137]; % [m]
+r_cm = [0; 0; 0.02];
