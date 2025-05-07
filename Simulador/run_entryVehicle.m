@@ -28,7 +28,7 @@ R_s = 287;
 startTime = 0.0; % [s]
 stopTime = 400.0; % [s]
 
-stepTime = 0.001; % [s]
+stepTime = 0.01; % [s]
 
 %% Initial Conditions
 
@@ -47,7 +47,6 @@ q_0 = deg2rad(0); % [rad/s] - Pitch rate
 r_0 = deg2rad(0); % [rad/s] - Yaw rate
 
 alpha_0 = deg2rad(-24.5); % [rad] - Angle of attack
-alpha_0 = deg2rad(-20.);
 beta_0 = deg2rad(0.05); % [rad] - Angle of sideslip
 sigma_0 = deg2rad(110.); % [rad] - Bank angle
 
@@ -76,4 +75,4 @@ d_ref = 3.9; % [m^2] - Vehicle diameter
 
 % Center of Mass location (with respect to apex reference frame)
 r_cm = [2.57; 0; -0.137]; % [m]
-r_cm = [0; 0; 0.02];
+r_cm = [2.57; 0; 0];
