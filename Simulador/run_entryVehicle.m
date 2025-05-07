@@ -1,3 +1,4 @@
+clc, clear;
 
 % Load Aerodynamic Data
 load("ApolloDragCoeff.mat");
