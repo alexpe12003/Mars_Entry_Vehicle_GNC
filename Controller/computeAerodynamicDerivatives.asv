@@ -1,0 +1,109 @@
+function [alphaT_deg, C_D, C_L, C_S, C_m, C_n, Cm_q, dCm_dalpha, dCL_dalpha, dCD_dalpha, dCL_dbeta, dCS_dbeta, dCn_dbeta, dCD_dM, dCl_dbeta, dCL_dM, dCm_dM] = computeAerodynamicDerivatives(M0, alpha_rad, beta_rad)
+% Computes all Apollo aerodynamic coefficients and their derivatives
+% Inputs in degrees, outputs in coefficient units and per-radian derivatives
+
+%% === Convert angles to deegres ===
+alpha = rad2deg(alpha_rad);
+beta  = rad2deg(beta_rad);
+cosA = cosd(alpha); sinA = sind(alpha);
+cosB = cosd(beta);  sinB = sind(beta);
+
+%% === Compute total angle of attack alpha_T ===
+cosT = cosA * cosB;
+alphaT_deg = acosd(cosT);
+sinT = sind(alphaT_deg);
+epsilon = 1e-6;
+if sinT < epsilon
+    warning("AlphaT near singularity, using epsilon for stability");
+    sinT = epsilon;
+end
+
+%% === Load Lookup Tables ===
+data = load('ApolloDragCoeff.mat');      CD_table = data.CD_T;
+data = load('ApolloLiftCoeff.mat');      CLT_table = data.CL_T;
+data = load('ApolloPitchMomentCoeff.mat'); CmT_table = data.Cm_T;
+data = load('ApolloPitchDampingCoeff.mat'); Cm_q_table = data.Cm_qT;
+
+%% === Interpolants ===
+Mach_grid = 
+CD_interp = griddedInterpolant(Mach_grid, AlphaT_grid, CD_table, 'linear', 'nearest');
+CLT_interp = griddedInterpolant(Mach_grid, AlphaT_grid, CLT_table, 'linear', 'nearest');
+CmT_interp = griddedInterpolant(Mach_grid, AlphaT_grid, CmT_table, 'linear', 'nearest');
+Cm_q_interp = griddedInterpolant(Mach_grid, AlphaT_grid, Cm_q_table, 'linear', 'nearest');
+
+%% === Interpolated Values ===
+CD_T = CD_interp(M0, alphaT_deg);
+CL_T = CLT_interp(M0, alphaT_deg);
+Cm_T = CmT_interp(M0, alphaT_deg);
+Cm_q = Cm_q_interp(M0, alphaT_deg);
+
+%% === Coefficient Transformations ===
+C_D = CD_T;
+C_L = (sinA / sinT) * CL_T;
+C_S = (cosA * sinB / sinT) * CL_T;
+C_m = (sinA * cosB / sinT) * Cm_T;
+C_n = (-sinB / sinT) * Cm_T;
+%% === Derivative d(alphaT)/d(alpha), d(alphaT)/d(beta) ===
+dAlphaT_dalpha = -(sinA * cosB) / sinT;
+dAlphaT_dbeta  = -(cosA * sinB) / sinT;
+
+%% === Finite differences for CLT, CmT, CDT ===
+d_alphaT = 1e-6;
+Cm_Tp = CmT_interp(M0, alphaT_deg + d_alphaT);
+Cm_Tm = CmT_interp(M0, alphaT_deg - d_alphaT);
+dCmT_dalphaT = (Cm_Tp - Cm_Tm) / deg2rad(2*d_alphaT);  % per radian 
+
+CL_Tp = CLT_interp(M0, alphaT_deg + d_alphaT);
+CL_Tm = CLT_interp(M0, alphaT_deg - d_alphaT);
+dCLT_dalphaT = (CL_Tp - CL_Tm) / deg2rad(2*d_alphaT);  % per radian
+
+CD_Tp = CD_interp(M0, alphaT_deg + d_alphaT);
+CD_Tm = CD_interp(M0, alphaT_deg - d_alphaT);
+dCDT_dalphaT = (CD_Tp - CD_Tm) / deg2rad(2*d_alphaT);  % per radian
+
+%% === dCm/dalpha ===
+dCm_dalpha = dCmT_dalphaT * (sinA * cosB / sinT) + Cm_T * (cosA * cosB * sinT - sinA * cosB * cosT) / (sinT^2);
+dCm_dalpha2 = -dAlphaT_dalpha^2 * Cm_T; 
+
+%% === dCL/dalpha ===
+dCL_dalpha = dCLT_dalphaT * (sinA / sinT) + ...
+    CL_T * (cosA * sinT - sinA * cosT) / (sinT^2);
+
+%% === dCD/dalpha ===
+dCD_dalpha = dCDT_dalphaT * dAlphaT_dalpha;
+
+%% === dCL/dbeta ===
+dCL_dbeta = -CL_T * sinA * cosT * dAlphaT_dbeta / (sinT^2);
+
+%% === dCS/dbeta ===
+term1 = (cosA * cosB / sinT) * CL_T;
+term2 = -(cosA * sinB * cosT * dAlphaT_dbeta / sinT^2) * CL_T;
+dCS_dbeta = term1 + term2;
+
+%% === dCn/dbeta ===
+dCn_dbeta = - (cosB / sinT - sinB * cosT * dAlphaT_dbeta / sinT^2)*Cm_T;
+
+%% === Finite difference for dCD/dM ===
+d_M = 1e-6;  % Small Mach step
+CD_TpM = CD_interp(M0 + d_M, alphaT_deg);
+CD_TmM = CD_interp(M0 - d_M, alphaT_deg);
+dCD_dM = (CD_TpM - CD_TmM) / (2 * d_M); % per Mach
+
+%% === Finite difference for dCl/dbeta ===
+dCl_dbeta = 0;
+
+%% === Finite difference for dCL/dM ===
+CL_TpM = CLT_interp(M0 + d_M, alphaT_deg);
+CL_TmM = CLT_interp(M0 - d_M, alphaT_deg);
+dCLT_dM = (CL_TpM - CL_TmM) / (2 * d_M);  % per Mach
+dCL_dM = (sinA / sinT)*dCLT_dM;
+
+%% === Finite difference for dCm/dM ===
+Cm_TpM = CmT_interp(M0 + d_M, alphaT_deg);
+Cm_TmM = CmT_interp(M0 - d_M, alphaT_deg);
+dCmT_dM = (Cm_TpM - Cm_TmM) / (2 * d_M);  % per Mach
+
+% Chain rule
+dCm_dM = (sinA * cosB / sinT)*dCmT_dM;
+
+end

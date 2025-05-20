@@ -1,4 +1,5 @@
-clc, clear;
+clc;
+clear all;
 
 % Load Aerodynamic Data
 load("ApolloDragCoeff.mat");
@@ -27,7 +28,7 @@ R_s = 287;
 
 % Simulation
 startTime = 0.0; % [s]
-stopTime = 400.0; % [s]
+stopTime = 700.0; % [s]
 
 stepTime = 0.01; % [s]
 
@@ -47,9 +48,9 @@ p_0 = deg2rad(0); % [rad/s] - Roll rate
 q_0 = deg2rad(0); % [rad/s] - Pitch rate
 r_0 = deg2rad(0); % [rad/s] - Yaw rate
 
-alpha_0 = deg2rad(-24.5); % [rad] - Angle of attack
+alpha_0 = deg2rad(-24); % [rad] - Angle of attack
 beta_0 = deg2rad(0.05); % [rad] - Angle of sideslip
-sigma_0 = deg2rad(110.); % [rad] - Bank angle
+sigma_0 = deg2rad(100.); % [rad] - Bank angle
 
 % Initial mass
 m_0 = 4976; % [kg]
@@ -62,8 +63,7 @@ I_zz = 4454.80; % [kg/m^2]
 % Initial products of inertia
 I_xy = 0; % [kg/m^2]
 I_yz = 0; % [kg/m^2]
-I_xz = 1752.00; % [kg/m^2]
-%I_xz = 0;
+I_xz = 0; % [kg/m^2]
 
 
 %% Vehicle Properties
@@ -75,5 +75,5 @@ S_ref = 12; % [m^2]
 d_ref = 3.9; % [m^2] - Vehicle diameter
 
 % Center of Mass location (with respect to apex reference frame)
-r_cm = [2.57; 0; -0.237]; % [m]
-%r_cm = [2.57; 0; 0];
+%r_cm = [2.57; 0; -0.137]; % [m]
+r_cm = [-0.137; 0; 1.8]; % [m]
