@@ -45,7 +45,7 @@ function [A, B, state_0, state_dot_0] = capsule_linearize(capsule, idx, state, D
     r0 = -c1 * cos(alpha0) + c2 * sin(alpha0);
 
 % Compute local aerodynamic derivatives
-    [alphaT_deg, CD0, CL0, CS0, Cm0, Cn0, Cmq0, dCm_dalpha, dCL_dalpha, dCD_dalpha, dCL_dbeta, dCS_dbeta, dCn_dbeta, dCD_dM, dCl_dbeta, dCL_dM, dCm_dM] = computeAerodynamicDerivatives(M0, alpha0, 0);
+    [alphaT_deg, CD0, CL0, CS0, Cm0, Cn0, Cmq0, dCm_dalpha, dCL_dalpha, dCD_dalpha, dCL_dbeta, dCS_dbeta, dCn_dbeta, dCD_dM, dCl_dbeta, dCL_dM, dCm_dM] = computeAerodynamicDerivatives(M0, alpha0, 0, rho_0, V0);
 
     drho_dh = -rho_0/H_s * exp(-(R0-Mars_radius)/H_s);
     da_dh = 0;

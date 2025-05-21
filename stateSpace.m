@@ -21,12 +21,12 @@ capsule.d_ref = d_ref;
 
 [A, B, ~, ~] = capsule_linearize(capsule, idx, state, D_L_S, F_g, mach, p_dyna, rho_0, H_s, Mars_radius);
 
-A_attitude = A(4:9,4:9)
-B_attitude = B(4:9,:)
+A_attitude = A(4:9,4:9);
+B_attitude = B(4:9,:);
 
 % Eigenvalues of A
 disp('--- Eigenvalues of A ---');
-eig_A = eig(A_attitude)
+eig_A = eig(A_attitude);
 
 % Controllability matrix and rank
 disp('--- Controllability Analysis ---');
@@ -66,6 +66,59 @@ R = diag([ ...
     1/(my_max)^2, ...
     1/(mz_max)^2]);
 
-K_lqr=lqr(A_attitude,B_attitude,Q,R)
-eig(A_attitude- B_attitude*K_lqr)
+K_lqr=lqr(A_attitude,B_attitude,Q,R);
+eig(A_attitude- B_attitude*K_lqr);
 
+%% Lateral and Longitudinal Controller
+
+% Indices: [p=1, q=2, r=3, alpha=4, beta=5, sigma=6]
+% Longitudinal subsystem (q and alpha)
+A_long = A_attitude([2, 4], [2, 4]);
+B_long = B_attitude([2, 4], 2);   % My only
+
+% Lateral subsystem (p, r, beta, sigma)
+A_lat = A_attitude([1, 3, 5, 6], [1, 3, 5, 6]);
+B_lat = B_attitude([1, 3, 5, 6], [1, 3]);   % Mx and Mz only
+
+qmax = deg2rad(15);       % rad/s
+alphamax = deg2rad(30);   % rad
+my_max = 100;           % Nm
+
+Q_long = diag([1/qmax^2, 1/alphamax^2]);
+R_long = 1/my_max^2;
+
+K_long = lqr(A_long, B_long, Q_long, R_long);
+
+pmax = deg2rad(20);     % rad/s
+rmax = deg2rad(20);     % rad/s
+betamax = deg2rad(3);  % rad
+sigmamax = deg2rad(100); % rad
+mx_max = 100;
+mz_max = 100;
+
+Q_lat = diag([1/pmax^2, 1/rmax^2, 1/betamax^2, 1/sigmamax^2]);
+R_lat = diag([1/mx_max^2, 1/mz_max^2]);
+
+K_lat = lqr(A_lat, B_lat, Q_lat, R_lat);
+
+longitudinal_ref = [0;0];
+lateral_ref = [0;0;0;deg2rad(25)];
+
+% Compute eigenvalues and eigenvectors of A_attitude
+[V, D] = eig(A_attitude);
+
+% Extract eigenvalues (on diagonal of D)
+eig_vals = diag(D);
+
+% Define state names in attitude block
+state_names = {'p', 'q', 'r', 'alpha', 'beta', 'sigma'};
+
+fprintf('\n======= Eigenvalue Analysis =======\n');
+for i = 1:length(eig_vals)
+    fprintf('\nEigenvalue %d: %.6f %+.6fi\n', i, real(eig_vals(i)), imag(eig_vals(i)));
+    fprintf('State contributions (|eigenvector|):\n');
+    
+    for j = 1:length(state_names)
+        fprintf('  %-6s : %.4f\n', state_names{j}, abs(V(j,i)));
+    end
+end
