@@ -92,7 +92,7 @@ K_longitudinal = lqr(A_long, B_long, Q_long, R_long);
 pmax = deg2rad(1.5);     % rad/s
 rmax = deg2rad(1.5);     % rad/s
 betamax = deg2rad(1);  % rad
-sigmamax = deg2rad(1); % rad
+sigmamax = deg2rad(0.5); % rad
 mx_max = 1600;
 mz_max = 1600;
 
