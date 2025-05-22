@@ -80,26 +80,26 @@ B_long = B_attitude([2, 4], 2);   % My only
 A_lat = A_attitude([1, 3, 5, 6], [1, 3, 5, 6]);
 B_lat = B_attitude([1, 3, 5, 6], [1, 3]);   % Mx and Mz only
 
-qmax = deg2rad(15);       % rad/s
-alphamax = deg2rad(30);   % rad
-my_max = 100;           % Nm
+qmax = deg2rad(1.5);       % rad/s
+alphamax = deg2rad(1);   % rad
+my_max = 1600;           % Nm
 
 Q_long = diag([1/qmax^2, 1/alphamax^2]);
 R_long = 1/my_max^2;
 
-K_long = lqr(A_long, B_long, Q_long, R_long);
+K_longitudinal = lqr(A_long, B_long, Q_long, R_long);
 
-pmax = deg2rad(20);     % rad/s
-rmax = deg2rad(20);     % rad/s
-betamax = deg2rad(3);  % rad
-sigmamax = deg2rad(100); % rad
-mx_max = 100;
-mz_max = 100;
+pmax = deg2rad(1.5);     % rad/s
+rmax = deg2rad(1.5);     % rad/s
+betamax = deg2rad(1);  % rad
+sigmamax = deg2rad(4); % rad
+mx_max = 1600;
+mz_max = 1600;
 
 Q_lat = diag([1/pmax^2, 1/rmax^2, 1/betamax^2, 1/sigmamax^2]);
 R_lat = diag([1/mx_max^2, 1/mz_max^2]);
 
-K_lat = lqr(A_lat, B_lat, Q_lat, R_lat);
+K_lateral = lqr(A_lat, B_lat, Q_lat, R_lat);
 
 longitudinal_ref = [0;0];
 lateral_ref = [0;0;0;deg2rad(25)];
