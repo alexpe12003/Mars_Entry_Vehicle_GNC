@@ -27,7 +27,7 @@ function [A, B, state_0, state_dot_0] = capsule_linearize(capsule, idx, state, D
     gamma0 = state(idx, 8);
     R0 = state(idx, 1);
     alpha0 = state(idx, 4);
-    alpha0 = 0;
+    alpha0 = deg2rad(-23.82);
     sigma0 = state(idx, 6);
 
     D0 = D_L_S(idx, 1);
