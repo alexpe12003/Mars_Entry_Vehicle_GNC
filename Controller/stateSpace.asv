@@ -93,8 +93,8 @@ pmax = deg2rad(1.5);     % rad/s
 rmax = deg2rad(1.5);     % rad/s
 betamax = deg2rad(1);  % rad
 sigmamax = deg2rad(4); % rad
-mx_max = 100;
-mz_max = 100;
+mx_max = 10;
+mz_max = 10;
 
 Q_lat = diag([1/pmax^2, 1/rmax^2, 1/betamax^2, 1/sigmamax^2]);
 R_lat = diag([1/mx_max^2, 1/mz_max^2]);
@@ -125,7 +125,7 @@ mx_max    = 1600;           % Nm
 Q_psigma = diag([1/pmax^2, 1/sigmamax^2]);
 R_psigma = 1/mx_max^2;
 
-K_psigma = lqr(A_psigma, B_psigma, Q_psigma, R_psigma);
+K_psigma = lqr(A_psigma, B_psigma, Q_psigma, R_psigma);
 
 longitudinal_ref = [0;0];
 lateral_ref = [0;0;0;deg2rad(25)];
