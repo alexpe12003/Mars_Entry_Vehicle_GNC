@@ -28,7 +28,7 @@ R_s = 287;
 
 % Simulation
 startTime = 0.0; % [s]
-stopTime = 700.0; % [s]
+stopTime = 1200; % [s]
 
 stepTime = 0.01; % [s]
 

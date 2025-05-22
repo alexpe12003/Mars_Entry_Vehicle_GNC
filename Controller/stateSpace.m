@@ -1,6 +1,6 @@
 clc;
 
-load("Trajectory_openLoop.mat")
+load("Trajectory_openLoop_cleaned.mat")
 
 state = out.state.signals.values;
 D_L_S = out.D_L_S.signals.values;
@@ -124,3 +124,35 @@ for i = 1:length(eig_vals)
         fprintf('  %-6s : %.4f\n', state_names{j}, abs(V(j,i)));
     end
 end
+
+%% Gain Schedule
+times = [100 200 300 400 500];  % [s]
+
+[Mach_vector, K_long_table, K_lat_table] = computeGainSchedule( ...
+    times, out, capsule, rho_0, H_s, Mars_radius,stepTime);
+
+load('GainSchedule.mat');  % includes Mach_vector, K_long_table, K_lat_table
+
+Mach_Klong = Mach_vector;              % Breakpoints
+K_long_data = K_long_table;           % Table data (N x 2)
+
+% Save for Simulink usage
+save('KLongitudinalLUT.mat', 'Mach_Klong', 'K_long_data');
+
+K_lat_data = K_lat_table;
+
+%% Signal Editor
+
+% Example: change sigma from 0 to 25 deg (in rad) at t = 100 s
+time = [50 ,150, 300, 450];  % seconds
+sigma_deg = [100, 70, 120, 120];  % degrees
+
+% Create timeseries
+ts_sigma = timeseries(sigma_deg, time);
+ts_sigma.Name = 'sigma_ref';
+
+% Wrap it into a Dataset
+signalDataset = Simulink.SimulationData.Dataset;
+signalDataset = signalDataset.addElement(ts_sigma);
+
+save('sigma_ref_dataset.mat', 'signalDataset');
