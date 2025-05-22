@@ -1,5 +1,7 @@
 clc;
 
+load("Trajectory_openLoop.mat")
+
 state = out.state.signals.values;
 D_L_S = out.D_L_S.signals.values;
 F_g = out.F_g.signals.values;
@@ -100,32 +102,6 @@ Q_lat = diag([1/pmax^2, 1/rmax^2, 1/betamax^2, 1/sigmamax^2]);
 R_lat = diag([1/mx_max^2, 1/mz_max^2]);
 
 K_lateral = lqr(A_lat, B_lat, Q_lat, R_lat);
-
-% === 1. Yaw Controller: [r, beta] → ΔMz ===
-A_rbeta = A_attitude([3, 5], [3, 5]);
-B_rbeta = B_attitude([3, 5], 3);  % Mz
-
-rmax     = deg2rad(1.5);   % rad/s
-betamax  = deg2rad(1);     % rad
-mz_max   = 1600;           % Nm
-
-Q_rbeta = diag([1/rmax^2, 1/betamax^2]);
-R_rbeta = 1/mz_max^2;
-
-K_rbeta = lqr(A_rbeta, B_rbeta, Q_rbeta, R_rbeta);
-
-% === 2. Roll-Bank Controller: [p, sigma] → ΔMx ===
-A_psigma = A_attitude([1, 6], [1, 6]);
-B_psigma = B_attitude([1, 6], 1);  % Mx
-
-pmax      = deg2rad(1.5);   % rad/s
-sigmamax  = deg2rad(4);     % rad
-mx_max    = 1600;           % Nm
-
-Q_psigma = diag([1/pmax^2, 1/sigmamax^2]);
-R_psigma = 1/mx_max^2;
-
-K_psigma = lqr(A_psigma, B_psigma, Q_psigma, R_psigma);
 
 longitudinal_ref = [0;0];
 lateral_ref = [0;0;0;deg2rad(25)];
