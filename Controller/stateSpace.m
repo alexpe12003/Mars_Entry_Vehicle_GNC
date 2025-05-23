@@ -145,7 +145,7 @@ K_lat_data = K_lat_table;
 
 % Example: change sigma from 0 to 25 deg (in rad) at t = 100 s
 time = [50 ,150, 300, 450];  % seconds
-sigma_deg = [120, 120, 120, 120];  % degrees
+sigma_deg = [100, 70, 120, 120];  % degrees
 
 % Create timeseries
 ts_sigma = timeseries(sigma_deg, time);
