@@ -145,7 +145,7 @@ K_lat_data = K_lat_table;
 
 % Example: change sigma from 0 to 25 deg (in rad) at t = 100 s
 time = [50 ,150, 300, 450];  % seconds
-sigma_deg = [100, 70, 120, 120];  % degrees
+sigma_deg = [120, 120, 120, 120];  % degrees
 
 % Create timeseries
 ts_sigma = timeseries(sigma_deg, time);
@@ -156,3 +156,10 @@ signalDataset = Simulink.SimulationData.Dataset;
 signalDataset = signalDataset.addElement(ts_sigma);
 
 save('sigma_ref_dataset.mat', 'signalDataset');
+
+Mach_Ksigma = [34.0033; 25; 20; 5; 0];
+K_sigmaInt_data = linspace(0, 500000, length(Mach_Ksigma))';  % [Nx1] column
+Mach_Kbeta = [34.0033; 25; 20; 5; 0];
+K_betaInt_data = linspace(0, 1000, length(Mach_Ksigma))';  % [Nx1] column
+save('KsigmaIntLUT.mat', 'Mach_Ksigma', 'K_sigmaInt_data');
+save('KbetaIntLUT.mat', 'Mach_Kbeta', 'K_betaInt_data');
