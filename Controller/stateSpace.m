@@ -123,11 +123,11 @@ if ~exist('data_sets', 'dir')
 end
 
 % Save gain schedule data
-save(fullfile('data_sets', 'GainSchedule.mat'), 'Mach_vector', 'K_long_table', 'K_lat_table');
+save(fullfile('Controller/data_sets', 'GainSchedule.mat'), 'Mach_vector', 'K_long_table', 'K_lat_table');
 
 Mach_Klong = Mach_vector;
 K_long_data = K_long_table;
-save(fullfile('data_sets', 'KLongitudinalLUT.mat'), 'Mach_Klong', 'K_long_data');
+save(fullfile('Controller/data_sets', 'KLongitudinalLUT.mat'), 'Mach_Klong', 'K_long_data');
 
 K_lat_data = K_lat_table;
 
@@ -141,12 +141,12 @@ ts_sigma.Name = 'sigma_ref';
 signalDataset = Simulink.SimulationData.Dataset;
 signalDataset = signalDataset.addElement(ts_sigma);
 
-save(fullfile('data_sets', 'sigma_ref_dataset.mat'), 'signalDataset');
+save(fullfile('Controller/data_sets', 'sigma_ref_dataset.mat'), 'signalDataset');
 
 Mach_Ksigma = [34.0033; 25; 20; 5; 0];
 K_sigmaInt_data = linspace(0, 500000, length(Mach_Ksigma))';
 Mach_Kbeta = [34.0033; 25; 20; 5; 0];
 K_betaInt_data = linspace(0, 1000, length(Mach_Ksigma))';
 
-save(fullfile('data_sets', 'KsigmaIntLUT.mat'), 'Mach_Ksigma', 'K_sigmaInt_data');
-save(fullfile('data_sets', 'KbetaIntLUT.mat'), 'Mach_Kbeta', 'K_betaInt_data');
+save(fullfile('Controller/data_sets', 'KsigmaIntLUT.mat'), 'Mach_Ksigma', 'K_sigmaInt_data');
+save(fullfile('Controller/data_sets', 'KbetaIntLUT.mat'), 'Mach_Kbeta', 'K_betaInt_data');
