@@ -36,24 +36,20 @@ Co = ctrb(A_attitude, B_attitude);
 rank_Co = rank(Co);
 disp(['Rank of controllability matrix: ', num2str(rank_Co)]);
 
-% State constraints (define in rad or proper units)
-%vmax = 100;             % [m/s] (assuming V)
-%gammamax = deg2rad(3);% [rad]
-%Rmax = deg2rad(4);    % [rad]
-pmax = deg2rad(3);    % [rad/s]
-qmax = deg2rad(3);    % [rad/s]
-rmax = deg2rad(2);    % [rad/s]
-alfamax = deg2rad(3); % [rad]
-betamax = deg2rad(3); % [rad]
-sigmamax = deg2rad(3);% [rad]
+% State constraints
+pmax = deg2rad(3);    
+qmax = deg2rad(3);    
+rmax = deg2rad(2);    
+alfamax = deg2rad(3); 
+betamax = deg2rad(3); 
+sigmamax = deg2rad(3);
 
 % Actuator limits (moments)
-mx_max = 1000; % [Nm]
-my_max = 1000; % [Nm]
-mz_max = 1000; % [Nm]
+mx_max = 1000; 
+my_max = 1000; 
+mz_max = 1000; 
 
-
-% Build Q (penalize deviation relative to max allowed)
+% Build Q and R matrices
 Q = diag([ ...
     1/(pmax)^2, ...
     1/(qmax)^2, ...
@@ -62,39 +58,35 @@ Q = diag([ ...
     1/(betamax)^2, ...
     1/(sigmamax)^2]);
 
-% Build R (penalize control effort relative to actuator max)
 R = diag([ ...
     1/(mx_max)^2, ...
     1/(my_max)^2, ...
     1/(mz_max)^2]);
 
-K_lqr=lqr(A_attitude,B_attitude,Q,R);
-eig(A_attitude- B_attitude*K_lqr);
+K_lqr = lqr(A_attitude,B_attitude,Q,R);
+eig(A_attitude - B_attitude*K_lqr);
 
 %% Lateral and Longitudinal Controller
 
-% Indices: [p=1, q=2, r=3, alpha=4, beta=5, sigma=6]
-% Longitudinal subsystem (q and alpha)
 A_long = A_attitude([2, 4], [2, 4]);
-B_long = B_attitude([2, 4], 2);   % My only
+B_long = B_attitude([2, 4], 2);
 
-% Lateral subsystem (p, r, beta, sigma)
 A_lat = A_attitude([1, 3, 5, 6], [1, 3, 5, 6]);
-B_lat = B_attitude([1, 3, 5, 6], [1, 3]);   % Mx and Mz only
+B_lat = B_attitude([1, 3, 5, 6], [1, 3]);
 
-qmax = deg2rad(1.5);       % rad/s
-alphamax = deg2rad(1);   % rad
-my_max = 1600;           % Nm
+qmax = deg2rad(1.5);
+alphamax = deg2rad(1);
+my_max = 1600;
 
 Q_long = diag([1/qmax^2, 1/alphamax^2]);
 R_long = 1/my_max^2;
 
 K_longitudinal = lqr(A_long, B_long, Q_long, R_long);
 
-pmax = deg2rad(1.5);     % rad/s
-rmax = deg2rad(1.5);     % rad/s
-betamax = deg2rad(1);  % rad
-sigmamax = deg2rad(0.5); % rad
+pmax = deg2rad(1.5);
+rmax = deg2rad(1.5);
+betamax = deg2rad(1);
+sigmamax = deg2rad(0.5);
 mx_max = 1600;
 mz_max = 1600;
 
@@ -103,23 +95,18 @@ R_lat = diag([1/mx_max^2, 1/mz_max^2]);
 
 K_lateral = lqr(A_lat, B_lat, Q_lat, R_lat);
 
-longitudinal_ref = [0;0];
-lateral_ref = [0;0;0;deg2rad(25)];
+longitudinal_ref = [0; 0];
+lateral_ref = [0; 0; 0; deg2rad(25)];
 
-% Compute eigenvalues and eigenvectors of A_attitude
+% Eigenvalue analysis
 [V, D] = eig(A_attitude);
-
-% Extract eigenvalues (on diagonal of D)
 eig_vals = diag(D);
-
-% Define state names in attitude block
 state_names = {'p', 'q', 'r', 'alpha', 'beta', 'sigma'};
 
 fprintf('\n======= Eigenvalue Analysis =======\n');
 for i = 1:length(eig_vals)
     fprintf('\nEigenvalue %d: %.6f %+.6fi\n', i, real(eig_vals(i)), imag(eig_vals(i)));
     fprintf('State contributions (|eigenvector|):\n');
-    
     for j = 1:length(state_names)
         fprintf('  %-6s : %.4f\n', state_names{j}, abs(V(j,i)));
     end
@@ -127,39 +114,39 @@ end
 
 %% Gain Schedule
 times = [100 200 300 400 500];  % [s]
-
 [Mach_vector, K_long_table, K_lat_table] = computeGainSchedule( ...
-    times, out, capsule, rho_0, H_s, Mars_radius,stepTime);
+    times, out, capsule, rho_0, H_s, Mars_radius, stepTime);
 
-load('GainSchedule.mat');  % includes Mach_vector, K_long_table, K_lat_table
+% Ensure data_sets directory exists
+if ~exist('data_sets', 'dir')
+    mkdir('data_sets');
+end
 
-Mach_Klong = Mach_vector;              % Breakpoints
-K_long_data = K_long_table;           % Table data (N x 2)
+% Save gain schedule data
+save(fullfile('data_sets', 'GainSchedule.mat'), 'Mach_vector', 'K_long_table', 'K_lat_table');
 
-% Save for Simulink usage
-save('KLongitudinalLUT.mat', 'Mach_Klong', 'K_long_data');
+Mach_Klong = Mach_vector;
+K_long_data = K_long_table;
+save(fullfile('data_sets', 'KLongitudinalLUT.mat'), 'Mach_Klong', 'K_long_data');
 
 K_lat_data = K_lat_table;
 
 %% Signal Editor
+time = [0, 150, 300, 450];
+sigma_deg = [100, 70, 120, 120];
 
-% Example: change sigma from 0 to 25 deg (in rad) at t = 100 s
-time = [50 ,150, 300, 450];  % seconds
-sigma_deg = [100, 70, 120, 120];  % degrees
-
-% Create timeseries
 ts_sigma = timeseries(sigma_deg, time);
 ts_sigma.Name = 'sigma_ref';
 
-% Wrap it into a Dataset
 signalDataset = Simulink.SimulationData.Dataset;
 signalDataset = signalDataset.addElement(ts_sigma);
 
-save('sigma_ref_dataset.mat', 'signalDataset');
+save(fullfile('data_sets', 'sigma_ref_dataset.mat'), 'signalDataset');
 
 Mach_Ksigma = [34.0033; 25; 20; 5; 0];
-K_sigmaInt_data = linspace(0, 500000, length(Mach_Ksigma))';  % [Nx1] column
+K_sigmaInt_data = linspace(0, 500000, length(Mach_Ksigma))';
 Mach_Kbeta = [34.0033; 25; 20; 5; 0];
-K_betaInt_data = linspace(0, 1000, length(Mach_Ksigma))';  % [Nx1] column
-save('KsigmaIntLUT.mat', 'Mach_Ksigma', 'K_sigmaInt_data');
-save('KbetaIntLUT.mat', 'Mach_Kbeta', 'K_betaInt_data');
+K_betaInt_data = linspace(0, 1000, length(Mach_Ksigma))';
+
+save(fullfile('data_sets', 'KsigmaIntLUT.mat'), 'Mach_Ksigma', 'K_sigmaInt_data');
+save(fullfile('data_sets', 'KbetaIntLUT.mat'), 'Mach_Kbeta', 'K_betaInt_data');
