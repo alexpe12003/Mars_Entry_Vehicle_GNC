@@ -82,4 +82,4 @@ r_cm = [-0.137; 0; 1.8]; % [m]
 
 %% IMU Sensor Properties
 
-% Accelerometer 
+% Acceler
