@@ -65,7 +65,7 @@ I_xy = 0; % [kg/m^2]
 I_yz = 0; % [kg/m^2]
 I_xz = 0; % [kg/m^2]
 
-
+Q0 = get_Q0(tau_0,lambda_0,chi_0,gamma_0,alpha_0,beta_0,sigma_0);
 %% Vehicle Properties
 
 % Reference Area
