@@ -13,8 +13,10 @@ vD =  -V_0 * sin(gamma_0);
 v_ned = [vN; vE; vD];
 
 % Transformation matrix from NED to ECI
-sL = sin(lambda_0); cL = cos(lambda_0);
-sT = sin(tau_0);    cT = cos(tau_0);
+sL = sin(lambda_0);
+cL = cos(lambda_0);
+sT = sin(tau_0);
+cT = cos(tau_0);
 T_ECI_NED = [
     -sL*cT, -sT, -cL*cT;
     -sL*sT,  cT, -cL*sT;
