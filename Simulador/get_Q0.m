@@ -45,4 +45,5 @@ function [Q0] = get_Q0(tau_0, lambda_0, chi_0, gamma_0, alpha_0, beta_0, sigma_0
     
     % Quaternion as a column vector (or row vector if preferred)
     Q0 = [Q1; Q2; Q3; Q4];
+    Q0 = Q0/norm(Q0);
 end

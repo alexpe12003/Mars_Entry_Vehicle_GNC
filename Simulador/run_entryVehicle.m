@@ -48,8 +48,8 @@ p_0 = deg2rad(0); % [rad/s] - Roll rate
 q_0 = deg2rad(0); % [rad/s] - Pitch rate
 r_0 = deg2rad(0); % [rad/s] - Yaw rate
 
-alpha_0 = deg2rad(-24); % [rad] - Angle of attack
-beta_0 = deg2rad(0.05); % [rad] - Angle of sideslip
+alpha_0 = deg2rad(-23.82); % [rad] - Angle of attack
+beta_0 = deg2rad(0.0); % [rad] - Angle of sideslip
 sigma_0 = deg2rad(100.); % [rad] - Bank angle
 
 % Initial mass
