@@ -67,6 +67,7 @@ I_xz = 0; % [kg/m^2]
 
 Q0 = get_Q0(tau_0,lambda_0,chi_0,gamma_0,alpha_0,beta_0,sigma_0);
 [r0_eci, v0_eci] = getInitialECI(R_0, tau_0, lambda_0, V_0, gamma_0, chi_0);
+
 %% Vehicle Properties
 
 % Reference Area
@@ -82,4 +83,14 @@ r_cm = [-0.137; 0; 1.8]; % [m]
 
 %% IMU Sensor Properties
 
-% Accelerometer 
+% Accelerometer
+acce_bias = [0; 0; 0];
+acce_S = [0, 0, 0;...
+          0, 0, 0;...
+          0, 0, 0];
+
+% Rate Gyroscope
+rateGyro_bias = [0; 0; 0];
+rateGyro_S = [0, 0, 0;...
+              0, 0, 0;...
+              0, 0, 0];
