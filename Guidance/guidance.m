@@ -2,19 +2,20 @@
 
 % === Earth Radius ===
 Mars_radius = 6371e3;  % Radius of Earth in meters [m]
+H_s = 7050;  % Scale height of Earth' atmosphere [m]
+rho_0 = 1.225;  % Reference density of Earth' atmosphere at sea level [kg/m^3]
 
 %% Simulation Setup
 
 simOut = sim("entryVehicle.slx");
-sample_rate_guidance = 0.01;
-
+%sample_rate_guidance
 % === Constants for New Gain Computation ===
 m_0 = 4976;  % [kg] - Initial mass
 Sref = 12;   % [m^2] - Reference area
 
 ballistic_beta = 340;  % [kg/m^2] - Ballistic coefficient
 L_over_D = 0.3;       % [Dimensionless] - Lift-to-Drag ratio
-dynamics_constants = [m_0, Sref, H_s, ballistic_beta, rho_0, L_over_D, Mars_radius];
+dynamics_constants = [m_0, S_ref, H_s, ballistic_beta, rho_0, L_over_D, Mars_radius];
 
 % === Extract State Vectors from Simulation ===
 state = simOut.state.signals.values;
@@ -41,33 +42,44 @@ gs = simOut.gs.signals.values / m_0;  % Gravitational acceleration per unit mass
 % === Compute Gains from Costate Equations ===
 gain_table = compute_F1_F2_F3_from_costates( ...
     v_star, gamma_star, h_star, hdot_star, D_star, ...
-    Mars_radius, m_0, rho, gs, Sref, sigma, ballistic_beta, L_over_D, t);
-
+    Mars_radius, m_0, rho, gs, Sref, sigma, ballistic_beta, L_over_D,t);
 
 % === Filter for Velocity Range of Interest ===
-v_min = 300;  % Minimum velocity [m/s]
-v_max = 8000;  % Maximum velocity [m/s]
-valid_idx = (v_star >= v_min) & (v_star <= v_max);  % Filter condition
+%v_min = 0;  % Minimum velocity [m/s]
+%v_max = 11000;  % Maximum velocity [m/s]
+%valid_idx = (v_star >= v_min) & (v_star <= v_max);  % Filter condition
 
 % Apply filtering to all relevant variables
-v_star = v_star(valid_idx);
-hdot_star = hdot_star(valid_idx);
-s_star = s_star(valid_idx);
-D_star = D_star(valid_idx);
-F1 = gain_table.F1(valid_idx);
-F2 = gain_table.F2(valid_idx);
-F3 = gain_table.F3(valid_idx);
-t = t(valid_idx);
-sigma=sigma(valid_idx);
+%v_star = v_star(valid_idx);
+%hdot_star = hdot_star(valid_idx);
+%s_star = s_star(valid_idx);
+%D_star = D_star(valid_idx);
+F1 = gain_table.F1;%(valid_idx);
+F2 = gain_table.F2;%(valid_idx);
+F3 = gain_table.F3;%(valid_idx);
+%t = t(valid_idx);
+
+% === Bin and Average by Velocity ===
+v_bin_width = 10;  % Velocity bin width [m/s]
+v_binned = round(v_star / v_bin_width) * v_bin_width;  % Binning velocity values
+[v_unique_ds, ~, bin_idx] = unique(v_binned);  % Unique velocity bins
+
+% Bin data and compute averages
+hdot_lut_ds = accumarray(bin_idx, hdot_star, [], @mean);
+s_lut_ds = accumarray(bin_idx, s_star, [], @mean);
+drag_lut_ds = accumarray(bin_idx, D_star, [], @mean);
+F1_ds = accumarray(bin_idx, F1, [], @mean);
+F2_ds = accumarray(bin_idx, F2, [], @mean);
+F3_ds = accumarray(bin_idx, F3, [], @mean);
 
 % === Pack Results into Gain Table Structure ===
-gain_table_ds.v = v_star;
-gain_table_ds.F1 = F1;
-gain_table_ds.F2 = F2;
-gain_table_ds.F3 = F3;
+gain_table_ds.v = v_unique_ds;
+gain_table_ds.F1 = F1_ds;
+gain_table_ds.F2 = F2_ds;
+gain_table_ds.F3 = F3_ds;
 
-% Now save the data without any filtering or binning
-save('Guidance/data_sets_guidance/guidance_lookup_tables.mat', 'v_star', 'hdot_star', 'D_star', 'gain_table_ds', 's_star');
+% Now save the data
+save('Guidance/data_sets_guidance/guidance_lookup_tables.mat', 'v_unique_ds', 'hdot_lut_ds', 'drag_lut_ds','s_lut_ds', 'gain_table_ds');
 
 %% Sanity Check Plots
 
@@ -75,32 +87,32 @@ save('Guidance/data_sets_guidance/guidance_lookup_tables.mat', 'v_star', 'hdot_s
 figure('Name','Guidance Lookup Tables (Raw, Binned)', 'NumberTitle','off');
 
 subplot(2,3,1)
-plot(v_star, hdot_star, 'LineWidth', 1.2); grid on;
+plot(v_unique_ds, hdot_lut_ds, 'LineWidth', 1.2); grid on;
 xlabel('Velocity [m/s]'); ylabel('hdot^* [m/s]');
 title('Altitude Rate vs Velocity');
 
 subplot(2,3,2)
-plot(v_star, s_star, 'LineWidth', 1.2); grid on;
+plot(v_unique_ds, s_lut_ds, 'LineWidth', 1.2); grid on;
 xlabel('Velocity [m/s]'); ylabel('s^* [m]');
 title('Downrange vs Velocity');
 
 subplot(2,3,3)
-plot(v_star, D_star, 'LineWidth', 1.2); grid on;
+plot(v_unique_ds, drag_lut_ds, 'LineWidth', 1.2); grid on;
 xlabel('Velocity [m/s]'); ylabel('D^* [N]');
 title('Drag vs Velocity');
 
 subplot(2,3,4)
-plot(v_star, F1, 'LineWidth', 1.2); grid on;
+plot(v_unique_ds, F1_ds, 'LineWidth', 1.2); grid on;
 xlabel('Velocity [m/s]'); ylabel('F1');
 title('Gain F1 vs Velocity');
 
 subplot(2,3,5)
-plot(v_star, F2, 'LineWidth', 1.2); grid on;
+plot(v_unique_ds, F2_ds, 'LineWidth', 1.2); grid on;
 xlabel('Velocity [m/s]'); ylabel('F2');
 title('Gain F2 vs Velocity');
 
 subplot(2,3,6)
-plot(v_star, F3, 'LineWidth', 1.2); grid on;
+plot(v_unique_ds, F3_ds, 'LineWidth', 1.2); grid on;
 xlabel('Velocity [m/s]'); ylabel('F3');
 title('Gain F3 vs Velocity');
 
@@ -113,8 +125,15 @@ title('Downrange vs Time');
 
 % === Bank Angle (sigma) vs Time ===
 figure('Name','Bank Angle (sigma) vs Time','NumberTitle','off');
-plot(t, sigma, 'LineWidth', 1.5);
+plot(t, rad2deg(sigma), 'LineWidth', 1.5);
 xlabel('Time [s]');
-ylabel('Bank Angle (sigma) [rad]');
+ylabel('Bank Angle (sigma) [deg]');
 title('Bank Angle (sigma) vs Time');
 grid on;
+
+% === Altitude vs Downrange ===
+figure('Name','Downrange vs Time','NumberTitle','off');
+plot(s_star*10^-3, h_star*10^-3, 'LineWidth', 1.5);
+xlabel('Downrange[km]');
+ylabel('Altiude [km]');
+title('Altitude vs Downrange');

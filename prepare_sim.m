@@ -1,3 +1,4 @@
+clc;clear
 % === Open Entry Vehicle Simulink Model ===
 open_system('entryVehicle.slx');  % Open the Simulink model
 
