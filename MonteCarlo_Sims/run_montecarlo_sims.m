@@ -2,32 +2,33 @@ N = 10;  % Number of Monte Carlo runs
 results = struct();  % Store simulation results
 
 % Nominal landing target
-lat_c = -1.76;     % deg
-lon_c = 19.13;     % deg
+lat_c = -0.417;%-1.76;     % deg
+lon_c = 15.495;%19.13;     % deg
 
 lats = zeros(1, N);
 lons = zeros(1, N);
-s_star_nominal=2.209934992639319e+06;
+s_star_nominal=1.753*10^6; %2.209934992639319e+06;
 for i = 1:N
     % === 1. Perturb initial conditions ===
     V_0_var       = 11e3 * (1 + 0.02*randn());
     gamma_0_var   = deg2rad(-9.536 + 0.1*randn());
     chi_0_var     = deg2rad(90 + 1.0*randn());  % heading
     R_0_var       = (220e3 + Mars_radius) + 3000*randn();
-    %tau_0_var     = deg2rad(0.2*randn());       % ±0.2 deg longitude error
-    %lambda_0_var  = deg2rad(0.2*randn());       % ±0.2 deg latitude error
+    tau_0_var     = deg2rad(0.1*randn());       % ±0.2 deg longitude error
+    lambda_0_var  = deg2rad(0.1*randn());       % ±0.2 deg latitude error
 
-    %alpha_0_var   = deg2rad(-23.82 + 1.0*randn());
-    %beta_0_var    = deg2rad(0 + 0.5*randn());
+    alpha_0_var   = deg2rad(-23.82 + 1.0*randn());
+    beta_0_var    = deg2rad(0 + 0.5*randn());
     sigma_0_var   = deg2rad(100 + 5*randn());
 
-    %p_0_var       = deg2rad(0.2*randn());
-    %q_0_var       = deg2rad(0.2*randn());
-    %r_0_var       = deg2rad(0.2*randn());
+    p_0_var       = deg2rad(0.2*randn());
+    q_0_var       = deg2rad(0.2*randn());
+    r_0_var       = deg2rad(0.2*randn());
+    m_0_var       = 4976 * (1 + 0.05*randn());
 
-    %I_xx_var      = 5617.61 * (1 + 0.05*randn());
-    %I_yy_var      = 4454.62 * (1 + 0.05*randn());
-    %I_zz_var      = 4454.80 * (1 + 0.05*randn());
+    I_xx_var      = 5617.61 * (1 + 0.05*randn());
+    I_yy_var      = 4454.62 * (1 + 0.05*randn());
+    I_zz_var      = 4454.80 * (1 + 0.05*randn());
 
     %I_xy_var      = 0;
     %I_yz_var      = 0;
@@ -54,7 +55,7 @@ for i = 1:N
     %assignin('base', 'q_0', q_0_var);
     %assignin('base', 'r_0', r_0_var);
 
-    %assignin('base', 'm_0', m_0_var);
+    assignin('base', 'm_0', m_0_var);
     %assignin('base', 'I_xx', I_xx_var);
     %assignin('base', 'I_yy', I_yy_var);
     %assignin('base', 'I_zz', I_zz_var);
@@ -110,8 +111,8 @@ plot(lon_mean, lat_mean, 'ko', 'MarkerSize', 8, 'LineWidth', 1.5, 'DisplayName',
 % Plot nominal target point
 plot(lon_c, lat_c, 'rx', 'MarkerSize', 10, 'LineWidth', 2, 'DisplayName', 'Nominal Target');
 
-% === Draw 100 km radius circle around nominal point ===
-r_nominal = 100000;  % 10 km in meters
+% === Draw 20 km radius circle around nominal point ===
+r_nominal = 20000;  % 20 km in meters
 deg_per_m_lat = 1 / 111320;
 deg_per_m_lon = 1 / (111320 * cosd(lat_c));
 

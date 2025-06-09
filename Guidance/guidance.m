@@ -45,19 +45,21 @@ gain_table = compute_F1_F2_F3_from_costates( ...
     Mars_radius, m_0, rho, gs, Sref, sigma, ballistic_beta, L_over_D,t);
 
 % === Filter for Velocity Range of Interest ===
-%v_min = 0;  % Minimum velocity [m/s]
-%v_max = 11000;  % Maximum velocity [m/s]
-%valid_idx = (v_star >= v_min) & (v_star <= v_max);  % Filter condition
+v_min = 1000;  % Minimum velocity [m/s]
+v_max = 10000;  % Maximum velocity [m/s]
+valid_idx = (v_star >= v_min) & (v_star <= v_max);  % Filter condition
 
 % Apply filtering to all relevant variables
-%v_star = v_star(valid_idx);
-%hdot_star = hdot_star(valid_idx);
-%s_star = s_star(valid_idx);
-%D_star = D_star(valid_idx);
-F1 = gain_table.F1;%(valid_idx);
-F2 = gain_table.F2;%(valid_idx);
-F3 = gain_table.F3;%(valid_idx);
-%t = t(valid_idx);
+v_star = v_star(valid_idx);
+hdot_star = hdot_star(valid_idx);
+s_star = s_star(valid_idx);
+D_star = D_star(valid_idx);
+F1 = gain_table.F1(valid_idx);
+F2 = gain_table.F2(valid_idx);
+F3 = gain_table.F3(valid_idx);
+t = t(valid_idx);
+sigma=sigma(valid_idx);
+h_star=h_star(valid_idx);
 
 % === Bin and Average by Velocity ===
 v_bin_width = 10;  % Velocity bin width [m/s]
