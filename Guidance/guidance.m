@@ -139,3 +139,11 @@ plot(s_star*10^-3, h_star*10^-3, 'LineWidth', 1.5);
 xlabel('Downrange[km]');
 ylabel('Altiude [km]');
 title('Altitude vs Downrange');
+
+% === Bank Angle (sigma) vs Time ===
+figure('Name','Drag Profile vs Time','NumberTitle','off');
+plot(t, D_star, 'LineWidth', 1.5);
+xlabel('Time [s]');
+ylabel('Drag Profile [N]');
+title('Drag vs Time');
+grid on;

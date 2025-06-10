@@ -1,4 +1,4 @@
-N = 10;  % Number of Monte Carlo runs
+N = 500;  % Number of Monte Carlo runs
 results = struct();  % Store simulation results
 
 % Nominal landing target
@@ -7,7 +7,7 @@ lon_c = 15.495;%19.13;     % deg
 
 lats = zeros(1, N);
 lons = zeros(1, N);
-s_star_nominal=1.753*10^6; %2.209934992639319e+06;
+s_star_nominal=1.75364*10^6; %2.209934992639319e+06;
 for i = 1:N
     % === 1. Perturb initial conditions ===
     V_0_var       = 11e3 * (1 + 0.02*randn());
@@ -74,7 +74,7 @@ for i = 1:N
     downrange = simOut.downrange.signals.values;  % should be [Nx1]
     s_final = downrange(end);  % final value in meters
     
-    % Store downrange error relative to nominal
+    % Store downrange error relative to nominal 
     s_error_pct = 100 * (s_final - s_star_nominal) / s_star_nominal;  % erro percentual
     s_errors_pct(i) = s_error_pct;
     results(i).s_final = s_final;
@@ -111,8 +111,8 @@ plot(lon_mean, lat_mean, 'ko', 'MarkerSize', 8, 'LineWidth', 1.5, 'DisplayName',
 % Plot nominal target point
 plot(lon_c, lat_c, 'rx', 'MarkerSize', 10, 'LineWidth', 2, 'DisplayName', 'Nominal Target');
 
-% === Draw 20 km radius circle around nominal point ===
-r_nominal = 20000;  % 20 km in meters
+% === Draw 50 km radius circle around nominal point ===
+r_nominal = 50000;  % 50 km in meters
 deg_per_m_lat = 1 / 111320;
 deg_per_m_lon = 1 / (111320 * cosd(lat_c));
 
