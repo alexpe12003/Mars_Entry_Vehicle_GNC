@@ -49,9 +49,13 @@ This projet was developed under the course Guidance Navigation and Control from 
 ## 👨‍💻 Author
 
 Rafael Azeiteiro  [@rafacoimbratec]  
+
 Alexandre Pereira [@alexpe12003] 
+
 Eduadro Helena [@Dudax12123]
+
 Guilherme Martins [@github]
+
 Rodrigo Pereira [@rodmpereira14]
 ---
 
