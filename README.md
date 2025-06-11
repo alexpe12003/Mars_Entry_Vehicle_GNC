@@ -43,7 +43,7 @@ This projet was developed under the course Guidance Navigation and Control from 
 ## 📸 Visual Overview
 
 
-![Mars Entry Vehicle](Notes/Visual_Overview_fig.jpg)
+![Mars Entry Vehicle](Notes/Visual_Overview_fig.png)
 
 
 ## 👨‍💻 Author
