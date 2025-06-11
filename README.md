@@ -43,15 +43,16 @@ This projet was developed under the course Guidance Navigation and Control from 
 ## 📸 Visual Overview
 
 
+![Mars Entry Vehicle](Notes/Visual_Overview_fig.jpg)
 
 
 ## 👨‍💻 Author
 
 Rafael Azeiteiro  [@rafacoimbratec]  
-Alexandre Pereira [@github] 
-Eduadro Helena [@github]
+Alexandre Pereira [@alexpe12003] 
+Eduadro Helena [@Dudax12123]
 Guilherme Martins [@github]
-Rodrigo Pereira [@github]
+Rodrigo Pereira [@rodmpereira14]
 ---
 
 📘 Literature:
