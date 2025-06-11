@@ -1,3 +1,35 @@
+% =====================================================================
+% Monte Carlo Simulation for Entry Vehicle Landing Dispersion Analysis
+% =====================================================================
+%
+% This script performs a Monte Carlo simulation with N = 500 runs to assess
+% the sensitivity of the entry vehicle's landing performance to variations
+% in initial conditions and physical parameters. Each run perturbs key 
+% variables such as initial velocity, flight path angle, mass, and attitude.
+%
+% The simulation workflow consists of:
+%   1. Generating randomized initial conditions for each run
+%   2. Assigning them to the base workspace for use in the Simulink model
+%   3. Running the entry vehicle model (entryVehicle.slx)
+%   4. Recording final landing coordinates and downrange performance
+%   5. Plotting the dispersion of landing points in latitude (longitude fixed)
+%   6. Visualizing the distribution of downrange errors with a histogram
+%   7. Computing statistical metrics (mean and standard deviation of error)
+%
+% Outputs:
+%   - Landing dispersion plot (latitude vs fixed longitude)
+%   - Histogram of downrange errors (relative to nominal)
+%   - Printed statistics on downrange performance
+%
+% Notes:
+%   - The nominal target is defined by lat_c and lon_c
+%   - Final landing states are extracted from the Simulink output
+%   - Some parameters are commented out and can be re-enabled for further studies
+%
+% Author: [Your Name]
+% Date: [Current Date]
+% =====================================================================
+
 N = 500;  % Number of Monte Carlo runs
 results = struct();  % Store simulation results
 

@@ -1,3 +1,39 @@
+% =====================================================================
+% Attitude Control Design and Gain Scheduling for Entry Vehicle
+% =====================================================================
+%
+% This script handles the attitude controller design and gain scheduling
+% for an entry vehicle using linearized models at selected trajectory times.
+% It performs the following steps:
+%
+% 1. Loads cleaned open-loop trajectory simulation results.
+% 2. Extracts key state variables and aerodynamic parameters.
+% 3. (Optional) Linearizes the system at a selected time index (e.g., 100s).
+% 4. Designs an LQR controller for the attitude subsystem.
+% 5. Builds decoupled longitudinal and lateral controllers with constraints.
+% 6. Performs gain scheduling by computing controller gains at multiple 
+%    points along the trajectory.
+% 7. Saves gain lookup tables (LUTs) for use in Simulink implementation.
+% 8. Creates a sigma reference signal for simulation via the Signal Editor.
+%
+% Notes:
+%   - The gain schedule is stored in 'Controller/data_sets_control/'.
+%   - Linearization is based on the capsule properties and trajectory data.
+%   - Many controller design steps are currently commented for modular testing.
+%
+% Authors:
+%   Alexandre Alves Pereira       Nº112288
+%   Eduardo De Almeida Helena     Nº102793
+%   Guilherme Alexandre Pires Martins Nº112118
+%   Rafael Coimbra Azeiteiro      Nº102478
+%   Rodrigo Marques Pereira       Nº112117
+%
+% Professor:
+%   Alain de Souza
+%
+% Course Project — Guidance, Navigation and Control, IST Lisbon University
+% =====================================================================
+
 clc;
 
 % === Load Data ===

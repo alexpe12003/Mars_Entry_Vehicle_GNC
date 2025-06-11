@@ -1,3 +1,36 @@
+% =====================================================================
+% Initialization Script for Entry Vehicle Simulation (Earth Case)
+% =====================================================================
+%
+% This script sets up all necessary constants, initial conditions, and
+% vehicle/aerodynamic properties for simulating the atmospheric entry of a
+% capsule-like vehicle (Apollo-class) into Earth's atmosphere.
+%
+% It includes:
+%   - Definition of planetary and atmospheric parameters (Earth)
+%   - Loading of aerodynamic coefficient datasets (drag, lift, moments)
+%   - Specification of simulation time settings
+%   - Initialization of the vehicle's translational and rotational state
+%   - Computation of initial attitude quaternion and ECI coordinates
+%   - Definition of physical properties such as mass, inertia, and reference geometry
+%   - Configuration of inertial measurement unit (IMU) sensor biases and errors
+%
+% The initialized variables are later used in the main Simulink model and
+% associated control/guidance scripts.
+%
+% Authors:
+%   Alexandre Alves Pereira       Nº112288
+%   Eduardo De Almeida Helena     Nº102793
+%   Guilherme Alexandre Pires Martins Nº112118
+%   Rafael Coimbra Azeiteiro      Nº102478
+%   Rodrigo Marques Pereira       Nº112117
+%
+% Professor:
+%   Alain de Souza
+%
+% Course Project — Guidance, Navigation and Control, IST Lisbon University
+% =====================================================================
+
 clc;
 clear all;
 
