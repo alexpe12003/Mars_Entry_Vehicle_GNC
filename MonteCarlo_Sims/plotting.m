@@ -35,7 +35,6 @@ axis equal;
 
 
 % === 1. Carregar resultados guardados ===
-load('montecarlo_results.mat');  % <--- substitui com o teu ficheiro real
 % Espera-se que contenha: results(i).s_final para i = 1:N
 
 % === 2. Definir s_star (nominal downrange) ===
