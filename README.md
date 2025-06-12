@@ -52,9 +52,9 @@ Rafael Azeiteiro  [@rafacoimbratec]
 
 Alexandre Pereira [@alexpe12003] 
 
-Eduadro Helena [@Dudax12123]
+Eduardo Helena [@Dudax12123]
 
-Guilherme Martins [@github]
+Guilherme Martins [@Guilherme-Martins-2002]
 
 Rodrigo Pereira [@rodmpereira14]
 
